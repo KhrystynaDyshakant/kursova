@@ -1,0 +1,379 @@
+[
+  {
+    "model": "users.user",
+    "pk": 2,
+    "fields": {
+      "username": "maria",
+      "email": "maria@company.com",
+      "password": "pbkdf2_sha256$870000$qJZVWx9HBqQVBXZpNxVh1C$OvHvEVq1K0YcIJhj4YjH0DXvZj3mH3qK6B5jZ8r8P3c=",
+      "role": "employee",
+      "phone": "+380501234567",
+      "email_notifications": true,
+      "sms_notifications": false,
+      "is_active": true,
+      "is_staff": false,
+      "is_superuser": false
+    }
+  },
+  {
+    "model": "users.user",
+    "pk": 3,
+    "fields": {
+      "username": "ivan",
+      "email": "ivan@company.com",
+      "password": "pbkdf2_sha256$870000$qJZVWx9HBqQVBXZpNxVh1C$OvHvEVq1K0YcIJhj4YjH0DXvZj3mH3qK6B5jZ8r8P3c=",
+      "role": "employee",
+      "phone": "+380502345678",
+      "email_notifications": true,
+      "sms_notifications": true,
+      "is_active": true,
+      "is_staff": false,
+      "is_superuser": false
+    }
+  },
+  {
+    "model": "users.user",
+    "pk": 4,
+    "fields": {
+      "username": "olga_hr",
+      "email": "olga@company.com",
+      "password": "pbkdf2_sha256$870000$qJZVWx9HBqQVBXZpNxVh1C$OvHvEVq1K0YcIJhj4YjH0DXvZj3mH3qK6B5jZ8r8P3c=",
+      "role": "hr",
+      "phone": "+380503456789",
+      "email_notifications": true,
+      "sms_notifications": false,
+      "is_active": true,
+      "is_staff": true,
+      "is_superuser": false
+    }
+  },
+  {
+    "model": "users.hr",
+    "pk": 1,
+    "fields": {
+      "user": 4,
+      "managed_departments": ["IT", "Design", "Marketing"]
+    }
+  },
+  {
+    "model": "employees.salarystrategy",
+    "pk": 1,
+    "fields": {
+      "strategy_type": "fixed",
+      "monthly_amount": "30000.00",
+      "base_salary": null,
+      "bonus_percentage": null
+    }
+  },
+  {
+    "model": "employees.salarystrategy",
+    "pk": 2,
+    "fields": {
+      "strategy_type": "bonus",
+      "monthly_amount": null,
+      "base_salary": "25000.00",
+      "bonus_percentage": "20.00"
+    }
+  },
+  {
+    "model": "employees.salarystrategy",
+    "pk": 3,
+    "fields": {
+      "strategy_type": "fixed",
+      "monthly_amount": "35000.00",
+      "base_salary": null,
+      "bonus_percentage": null
+    }
+  },
+  {
+    "model": "employees.employee",
+    "pk": 1,
+    "fields": {
+      "first_name": "Марія",
+      "last_name": "Шевченко",
+      "email": "maria@company.com",
+      "phone": "+380501234567",
+      "position": "Senior Developer",
+      "department": "IT",
+      "hire_date": "2023-01-15",
+      "salary_strategy": 1
+    }
+  },
+  {
+    "model": "employees.employee",
+    "pk": 2,
+    "fields": {
+      "first_name": "Іван",
+      "last_name": "Петренко",
+      "email": "ivan@company.com",
+      "phone": "+380502345678",
+      "position": "UI/UX Designer",
+      "department": "Design",
+      "hire_date": "2023-03-20",
+      "salary_strategy": 2
+    }
+  },
+  {
+    "model": "employees.employee",
+    "pk": 3,
+    "fields": {
+      "first_name": "Ольга",
+      "last_name": "Коваль",
+      "email": "olga@company.com",
+      "phone": "+380503456789",
+      "position": "HR Manager",
+      "department": "HR",
+      "hire_date": "2022-06-01",
+      "salary_strategy": 3
+    }
+  },
+  {
+    "model": "employees.employee",
+    "pk": 4,
+    "fields": {
+      "first_name": "Андрій",
+      "last_name": "Мельник",
+      "email": "andriy@company.com",
+      "phone": "+380504567890",
+      "position": "Backend Developer",
+      "department": "IT",
+      "hire_date": "2023-05-10",
+      "salary_strategy": 2
+    }
+  },
+  {
+    "model": "employees.employee",
+    "pk": 5,
+    "fields": {
+      "first_name": "Софія",
+      "last_name": "Бондаренко",
+      "email": "sofia@company.com",
+      "phone": "+380505678901",
+      "position": "Marketing Manager",
+      "department": "Marketing",
+      "hire_date": "2023-02-14",
+      "salary_strategy": 1
+    }
+  },
+  {
+    "model": "requests.requeststate",
+    "pk": 1,
+    "fields": {
+      "state_type": "pending"
+    }
+  },
+  {
+    "model": "requests.requeststate",
+    "pk": 2,
+    "fields": {
+      "state_type": "approved"
+    }
+  },
+  {
+    "model": "requests.requeststate",
+    "pk": 3,
+    "fields": {
+      "state_type": "rejected"
+    }
+  },
+  {
+    "model": "requests.request",
+    "pk": 1,
+    "fields": {
+      "employee": 1,
+      "current_state": 2,
+      "created_date": "2025-11-01T10:30:00Z"
+    }
+  },
+  {
+    "model": "requests.request",
+    "pk": 2,
+    "fields": {
+      "employee": 2,
+      "current_state": 1,
+      "created_date": "2025-11-20T14:15:00Z"
+    }
+  },
+  {
+    "model": "requests.request",
+    "pk": 3,
+    "fields": {
+      "employee": 4,
+      "current_state": 3,
+      "created_date": "2025-11-10T09:00:00Z"
+    }
+  },
+  {
+    "model": "documents.document",
+    "pk": 1,
+    "fields": {
+      "document_type": "contract",
+      "created_date": "2023-01-15T09:00:00Z",
+      "status": "approved"
+    }
+  },
+  {
+    "model": "documents.document",
+    "pk": 2,
+    "fields": {
+      "document_type": "contract",
+      "created_date": "2023-03-20T10:00:00Z",
+      "status": "approved"
+    }
+  },
+  {
+    "model": "documents.document",
+    "pk": 3,
+    "fields": {
+      "document_type": "leave_request",
+      "created_date": "2025-11-15T11:30:00Z",
+      "status": "pending"
+    }
+  },
+  {
+    "model": "documents.document",
+    "pk": 4,
+    "fields": {
+      "document_type": "leave_request",
+      "created_date": "2025-11-18T14:20:00Z",
+      "status": "approved"
+    }
+  },
+  {
+    "model": "documents.contract",
+    "pk": 1,
+    "fields": {
+      "document": 1,
+      "employee": 1,
+      "position": "Senior Developer",
+      "salary": "30000.00",
+      "start_date": "2023-01-15",
+      "end_date": null
+    }
+  },
+  {
+    "model": "documents.contract",
+    "pk": 2,
+    "fields": {
+      "document": 2,
+      "employee": 2,
+      "position": "UI/UX Designer",
+      "salary": "30000.00",
+      "start_date": "2023-03-20",
+      "end_date": null
+    }
+  },
+  {
+    "model": "documents.leaverequest",
+    "pk": 1,
+    "fields": {
+      "document": 3,
+      "employee": 1,
+      "leave_type": "vacation",
+      "reason": "Відпустка для відпочинку",
+      "start_date": "2025-12-20",
+      "end_date": "2026-01-05"
+    }
+  },
+  {
+    "model": "documents.leaverequest",
+    "pk": 2,
+    "fields": {
+      "document": 4,
+      "employee": 4,
+      "leave_type": "sick",
+      "reason": "Лікарняний",
+      "start_date": "2025-11-18",
+      "end_date": "2025-11-22"
+    }
+  },
+  {
+    "model": "notifications.notification",
+    "pk": 1,
+    "fields": {
+      "recipient": 1,
+      "notification_type": "leave_approved",
+      "channel": "push",
+      "message": "Вашу заявку на відпустку схвалено! Період: 20.12.2025 - 05.01.2026",
+      "is_sent": true,
+      "is_read": false,
+      "created_at": "2025-11-16T10:00:00Z"
+    }
+  },
+  {
+    "model": "notifications.notification",
+    "pk": 2,
+    "fields": {
+      "recipient": 2,
+      "notification_type": "order_created",
+      "channel": "email",
+      "message": "Вашу заявку №2 отримано. Очікуйте на розгляд HR відділу.",
+      "is_sent": true,
+      "is_read": false,
+      "created_at": "2025-11-20T14:15:00Z"
+    }
+  },
+  {
+    "model": "notifications.notification",
+    "pk": 3,
+    "fields": {
+      "recipient": 4,
+      "notification_type": "leave_rejected",
+      "channel": "push",
+      "message": "На жаль, вашу заявку відхилено. Зверніться до HR для деталей.",
+      "is_sent": true,
+      "is_read": true,
+      "created_at": "2025-11-11T16:30:00Z"
+    }
+  },
+  {
+    "model": "timetracking.timerecord",
+    "pk": 1,
+    "fields": {
+      "employee": 1,
+      "clock_in_time": "2025-11-25T09:00:00Z",
+      "clock_out_time": "2025-11-25T18:00:00Z",
+      "date": "2025-11-25"
+    }
+  },
+  {
+    "model": "timetracking.timerecord",
+    "pk": 2,
+    "fields": {
+      "employee": 1,
+      "clock_in_time": "2025-11-24T08:30:00Z",
+      "clock_out_time": "2025-11-24T17:30:00Z",
+      "date": "2025-11-24"
+    }
+  },
+  {
+    "model": "timetracking.timerecord",
+    "pk": 3,
+    "fields": {
+      "employee": 2,
+      "clock_in_time": "2025-11-25T09:15:00Z",
+      "clock_out_time": "2025-11-25T18:15:00Z",
+      "date": "2025-11-25"
+    }
+  },
+  {
+    "model": "timetracking.timerecord",
+    "pk": 4,
+    "fields": {
+      "employee": 4,
+      "clock_in_time": "2025-11-25T08:45:00Z",
+      "clock_out_time": "2025-11-25T17:45:00Z",
+      "date": "2025-11-25"
+    }
+  },
+  {
+    "model": "timetracking.timerecord",
+    "pk": 5,
+    "fields": {
+      "employee": 5,
+      "clock_in_time": "2025-11-25T09:00:00Z",
+      "clock_out_time": null,
+      "date": "2025-11-25"
+    }
+  }
+]
