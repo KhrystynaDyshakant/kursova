@@ -1,0 +1,129 @@
+{% extends 'base.html' %}
+
+{% block title %}Панель HR{% endblock %}
+
+{% block content %}
+<h2><i class="bi bi-briefcase"></i> Панель HR менеджера</h2>
+
+<div class="row mt-4">
+    <!-- Статистика -->
+    <div class="col-md-3">
+        <div class="card text-center bg-primary text-white">
+            <div class="card-body">
+                <h3>{{ total_employees }}</h3>
+                <p class="mb-0">Співробітників</p>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-3">
+        <div class="card text-center bg-warning text-dark">
+            <div class="card-body">
+                <h3>{{ pending_requests }}</h3>
+                <p class="mb-0">Заявок на розгляд</p>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-3">
+        <div class="card text-center bg-info text-white">
+            <div class="card-body">
+                <h3>{{ on_leave_today }}</h3>
+                <p class="mb-0">У відпустці сьогодні</p>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-3">
+        <div class="card text-center bg-success text-white">
+            <div class="card-body">
+                <h3>{{ total_salary|floatformat:0 }}</h3>
+                <p class="mb-0">Витрати (грн)</p>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Швидкі дії -->
+<div class="card mt-4">
+    <div class="card-body">
+        <h5><i class="bi bi-lightning"></i> Швидкі дії</h5>
+        <a href="{% url 'pending_requests' %}" class="btn btn-warning me-2">
+            <i class="bi bi-hourglass-split"></i> Заявки на розгляд ({{ pending_requests }})
+        </a>
+        <a href="{% url 'all_employees' %}" class="btn btn-primary me-2">
+            <i class="bi bi-people"></i> Всі співробітники
+        </a>
+        <a href="{% url 'reports' %}" class="btn btn-info">
+            <i class="bi bi-bar-chart"></i> Звіти
+        </a>
+    </div>
+</div>
+
+<div class="row mt-4">
+    <!-- Співробітники по відділах -->
+    <div class="col-md-6">
+        <div class="card">
+            <div class="card-body">
+                <h5><i class="bi bi-diagram-3"></i> Співробітники по відділах</h5>
+                <table class="table table-hover">
+                    <thead class="table-light">
+                        <tr>
+                            <th>Відділ</th>
+                            <th>Кількість</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for dept in departments %}
+                        <tr>
+                            <td>{{ dept.department }}</td>
+                            <td><span class="badge bg-primary">{{ dept.count }}</span></td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+
+    <!-- Останні заявки -->
+    <div class="col-md-6">
+        <div class="card">
+            <div class="card-body">
+                <h5><i class="bi bi-clock-history"></i> Останні заявки</h5>
+                <div class="table-responsive">
+                    <table class="table table-hover table-sm">
+                        <thead class="table-light">
+                            <tr>
+                                <th>#</th>
+                                <th>Співробітник</th>
+                                <th>Статус</th>
+                                <th>Дата</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for req in recent_requests %}
+                            <tr>
+                                <td>{{ req.id }}</td>
+                                <td>{{ req.employee.first_name }} {{ req.employee.last_name }}</td>
+                                <td>
+                                    {% if req.current_state.state_type == 'pending' %}
+                                        <span class="badge bg-warning">Очікує</span>
+                                    {% elif req.current_state.state_type == 'approved' %}
+                                        <span class="badge bg-success">Схвалено</span>
+                                    {% elif req.current_state.state_type == 'rejected' %}
+                                        <span class="badge bg-danger">Відхилено</span>
+                                    {% endif %}
+                                </td>
+                                <td>{{ req.created_date|date:"d.m.Y" }}</td>
+                            </tr>
+                            {% empty %}
+                            <tr>
+                                <td colspan="4" class="text-center text-muted">Немає заявок</td>
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
