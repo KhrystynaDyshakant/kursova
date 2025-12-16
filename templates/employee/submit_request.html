@@ -1,0 +1,71 @@
+{% extends 'base.html' %}
+
+{% block title %}Подати заявку{% endblock %}
+
+{% block content %}
+<div class="row justify-content-center">
+    <div class="col-md-8">
+        <div class="card">
+            <div class="card-body">
+                <h3><i class="bi bi-plus-circle"></i> Подати нову заявку</h3>
+                <hr>
+
+                <form method="post">
+                    {% csrf_token %}
+
+                    <div class="row">
+                        <div class="col-md-6">
+                            <div class="mb-3">
+                                <label class="form-label">Співробітник</label>
+                                <input type="text" class="form-control" value="{{ employee.first_name }} {{ employee.last_name }}" disabled>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="mb-3">
+                                <label class="form-label">Тип заявки *</label>
+                                <select name="request_type" class="form-select" required>
+                                    <option value="">Оберіть тип</option>
+                                    <option value="vacation">🏖️ Відпустка</option>
+                                    <option value="sick">🏥 Лікарняний</option>
+                                    <option value="remote">💻 Віддалена робота</option>
+                                    <option value="other">📋 Інше</option>
+                                </select>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="row">
+                        <div class="col-md-6">
+                            <div class="mb-3">
+                                <label class="form-label">Дата початку</label>
+                                <input type="date" name="start_date" class="form-control">
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="mb-3">
+                                <label class="form-label">Дата завершення</label>
+                                <input type="date" name="end_date" class="form-control">
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="mb-3">
+                        <label class="form-label">Причина/Опис</label>
+                        <textarea name="reason" class="form-control" rows="4" placeholder="Опишіть причину заявки..."></textarea>
+                    </div>
+
+                    <div class="alert alert-info">
+                        <i class="bi bi-info-circle"></i>
+                        Заявка буде відправлена на розгляд HR відділу. Ви отримаєте сповіщення після розгляду.
+                    </div>
+
+                    <button type="submit" class="btn btn-primary btn-lg">
+                        <i class="bi bi-send"></i> Подати заявку
+                    </button>
+                    <a href="{% url 'employee_dashboard' %}" class="btn btn-secondary btn-lg">Скасувати</a>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

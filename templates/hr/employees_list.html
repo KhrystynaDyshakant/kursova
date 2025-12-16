@@ -1,0 +1,63 @@
+{% extends 'base.html' %}
+
+{% block title %}Співробітники{% endblock %}
+
+{% block content %}
+<h2><i class="bi bi-people"></i> Всі співробітники</h2>
+
+<!-- Статистика по відділах -->
+<div class="row mt-4">
+    {% for dept in departments %}
+    <div class="col-md-3">
+        <div class="card text-center">
+            <div class="card-body">
+                <h5>{{ dept.department }}</h5>
+                <h3 class="text-primary">{{ dept.count }}</h3>
+            </div>
+        </div>
+    </div>
+    {% endfor %}
+</div>
+
+<!-- Таблиця співробітників -->
+<div class="card mt-4">
+    <div class="card-body">
+        <div class="table-responsive">
+            <table class="table table-hover">
+                <thead class="table-light">
+                    <tr>
+                        <th>#</th>
+                        <th>Ім'я</th>
+                        <th>Посада</th>
+                        <th>Відділ</th>
+                        <th>Email</th>
+                        <th>Зарплата</th>
+                        <th>Дата прийому</th>
+                        <th>Дії</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for emp in employees %}
+                    <tr>
+                        <td>{{ emp.id }}</td>
+                        <td>
+                            <strong>{{ emp.first_name }} {{ emp.last_name }}</strong>
+                        </td>
+                        <td>{{ emp.position }}</td>
+                        <td><span class="badge bg-secondary">{{ emp.department }}</span></td>
+                        <td>{{ emp.email }}</td>
+                        <td><strong>{{ emp.get_salary }} грн</strong></td>
+                        <td>{{ emp.hire_date|date:"d.m.Y" }}</td>
+                        <td>
+                            <a href="{% url 'employee_detail' emp.id %}" class="btn btn-sm btn-info">
+                                <i class="bi bi-eye"></i> Деталі
+                            </a>
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+{% endblock %}

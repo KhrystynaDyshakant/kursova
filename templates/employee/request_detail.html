@@ -1,0 +1,98 @@
+{% extends 'base.html' %}
+
+{% block title %}Заявка #{{ request.id }}{% endblock %}
+
+{% block content %}
+<div class="row justify-content-center">
+    <div class="col-md-8">
+        <div class="card">
+            <div class="card-header bg-primary text-white">
+                <h4 class="mb-0">
+                    <i class="bi bi-file-text"></i> Заявка #{{ request.id }}
+                </h4>
+            </div>
+            <div class="card-body">
+                <!-- Статус -->
+                <div class="alert {% if request.current_state.state_type == 'pending' %}alert-warning{% elif request.current_state.state_type == 'approved' %}alert-success{% else %}alert-danger{% endif %}">
+                    <h5>
+                        {% if request.current_state.state_type == 'pending' %}
+                            ⏳ Очікує розгляду
+                        {% elif request.current_state.state_type == 'approved' %}
+                            ✅ Схвалено
+                        {% elif request.current_state.state_type == 'rejected' %}
+                            ❌ Відхилено
+                        {% endif %}
+                    </h5>
+                </div>
+
+                <!-- Інформація про заявку -->
+                <div class="row">
+                    <div class="col-md-6">
+                        <h6>Тип заявки:</h6>
+                        <p>
+                            {% if request.request_type == 'vacation' %}
+                                🏖️ Відпустка
+                            {% elif request.request_type == 'sick' %}
+                                🏥 Лікарняний
+                            {% elif request.request_type == 'remote' %}
+                                💻 Віддалена робота
+                            {% else %}
+                                📋 Інше
+                            {% endif %}
+                        </p>
+                    </div>
+                    <div class="col-md-6">
+                        <h6>Дата створення:</h6>
+                        <p>{{ request.created_date|date:"d.m.Y H:i" }}</p>
+                    </div>
+                </div>
+
+                {% if request.start_date and request.end_date %}
+                <div class="row mt-3">
+                    <div class="col-md-6">
+                        <h6>Дата початку:</h6>
+                        <p>{{ request.start_date|date:"d.m.Y" }}</p>
+                    </div>
+                    <div class="col-md-6">
+                        <h6>Дата завершення:</h6>
+                        <p>{{ request.end_date|date:"d.m.Y" }}</p>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-md-12">
+                        <h6>Кількість днів:</h6>
+                        <p><strong>{{ request.days_count }} днів</strong></p>
+                    </div>
+                </div>
+                {% endif %}
+
+                {% if request.reason %}
+                <div class="row mt-3">
+                    <div class="col-md-12">
+                        <h6>Причина/Опис:</h6>
+                        <p>{{ request.reason }}</p>
+                    </div>
+                </div>
+                {% endif %}
+
+                {% if request.hr_comment %}
+                <div class="row mt-3">
+                    <div class="col-md-12">
+                        <div class="alert alert-info">
+                            <h6><i class="bi bi-chat-left-text"></i> Коментар HR:</h6>
+                            <p class="mb-0">{{ request.hr_comment }}</p>
+                        </div>
+                    </div>
+                </div>
+                {% endif %}
+
+                <hr>
+
+                <a href="{% url 'my_requests' %}" class="btn btn-secondary">
+                    <i class="bi bi-arrow-left"></i> Назад до списку
+                </a>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

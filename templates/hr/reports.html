@@ -1,0 +1,115 @@
+{% extends 'base.html' %}
+
+{% block title %}Звіти{% endblock %}
+
+{% block content %}
+<h2><i class="bi bi-bar-chart"></i> Звіти та аналітика</h2>
+
+<div class="row mt-4">
+    <!-- Співробітники по відділах -->
+    <div class="col-md-6">
+        <div class="card">
+            <div class="card-body">
+                <h5><i class="bi bi-diagram-3"></i> Співробітники по відділах</h5>
+                <canvas id="departmentsChart"></canvas>
+            </div>
+        </div>
+    </div>
+
+    <!-- Витрати на зарплати -->
+    <div class="col-md-6">
+        <div class="card">
+            <div class="card-body">
+                <h5><i class="bi bi-cash-stack"></i> Витрати на зарплати по відділах</h5>
+                <table class="table table-hover">
+                    <thead class="table-light">
+                        <tr>
+                            <th>Відділ</th>
+                            <th>Загальна зарплата</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for dept, salary in salary_by_dept.items %}
+                        <tr>
+                            <td>{{ dept }}</td>
+                            <td><strong>{{ salary|floatformat:0 }} грн</strong></td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="row mt-4">
+    <!-- Статистика заявок -->
+    <div class="col-md-6">
+        <div class="card">
+            <div class="card-body">
+                <h5><i class="bi bi-pie-chart"></i> Заявки по статусам</h5>
+                <table class="table">
+                    <tbody>
+                        {% for stat in requests_stats %}
+                        <tr>
+                            <td>
+                                {% if stat.current_state__state_type == 'pending' %}
+                                    <span class="badge bg-warning">Очікують</span>
+                                {% elif stat.current_state__state_type == 'approved' %}
+                                    <span class="badge bg-success">Схвалено</span>
+                                {% elif stat.current_state__state_type == 'rejected' %}
+                                    <span class="badge bg-danger">Відхилено</span>
+                                {% endif %}
+                            </td>
+                            <td><strong>{{ stat.count }}</strong></td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+
+    <!-- Відпустки -->
+    <div class="col-md-6">
+        <div class="card">
+            <div class="card-body">
+                <h5><i class="bi bi-calendar-event"></i> Відпустки цього місяця</h5>
+                <div class="text-center py-4">
+                    <h1 class="display-4">{{ leaves_this_month }}</h1>
+                    <p class="text-muted">заявок на відпустку</p>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<script>
+// Графік по відділах
+const ctx = document.getElementById('departmentsChart');
+new Chart(ctx, {
+    type: 'bar',
+    data: {
+        labels: [{% for dept in departments_report %}'{{ dept.department }}',{% endfor %}],
+        datasets: [{
+            label: 'Кількість співробітників',
+            data: [{% for dept in departments_report %}{{ dept.count }},{% endfor %}],
+            backgroundColor: 'rgba(13, 110, 253, 0.8)',
+            borderColor: 'rgba(13, 110, 253, 1)',
+            borderWidth: 1
+        }]
+    },
+    options: {
+        responsive: true,
+        scales: {
+            y: {
+                beginAtZero: true
+            }
+        }
+    }
+});
+</script>
+{% endblock %}
