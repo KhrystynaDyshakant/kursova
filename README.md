@@ -47,7 +47,7 @@ python manage.py loaddata fixtures/initial_data.json
 python manage.py runserver
 ```
 
-8. Відкрити в браузері
+# 8. Відкрити в браузері
 
 ```
 http://127.0.0.1:8000
