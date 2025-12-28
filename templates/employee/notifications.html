@@ -1,0 +1,31 @@
+{% extends 'base.html' %}
+
+{% block title %}Сповіщення{% endblock %}
+
+{% block content %}
+<h2><i class="bi bi-bell"></i> Мої сповіщення</h2>
+
+<div class="card mt-3">
+    <div class="card-body">
+        {% for notification in notifications %}
+        <div class="alert alert-{% if notification.is_read %}secondary{% else %}info{% endif %} d-flex justify-content-between align-items-start">
+            <div>
+                <strong>{{ notification.get_notification_type_display }}</strong><br>
+                {{ notification.message }}
+                <br><small class="text-muted">{{ notification.created_at|date:"d.m.Y H:i" }}</small>
+            </div>
+            {% if not notification.is_read %}
+            <form method="post" action="{% url 'mark_as_read' notification.id %}">
+                {% csrf_token %}
+                <button type="submit" class="btn btn-sm btn-outline-primary">
+                    Позначити прочитаним
+                </button>
+            </form>
+            {% endif %}
+        </div>
+        {% empty %}
+        <p class="text-muted text-center">Немає сповіщень</p>
+        {% endfor %}
+    </div>
+</div>
+{% endblock %}

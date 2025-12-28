@@ -1,0 +1,63 @@
+{% extends 'base.html' %}
+
+{% block title %}Заявки на розгляд{% endblock %}
+
+{% block content %}
+<h2><i class="bi bi-hourglass-split"></i> Заявки на розгляд</h2>
+
+<div class="card mt-4">
+    <div class="card-body">
+        {% if requests %}
+        <div class="table-responsive">
+            <table class="table table-hover">
+                <thead class="table-warning">
+                    <tr>
+                        <th>#</th>
+                        <th>Співробітник</th>
+                        <th>Посада</th>
+                        <th>Відділ</th>
+                        <th>Дата створення</th>
+                        <th>Дії</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for req in requests %}
+                    <tr>
+                        <td><strong>{{ req.id }}</strong></td>
+                        <td>
+                            <a href="{% url 'employee_detail' req.employee.id %}">
+                                {{ req.employee.first_name }} {{ req.employee.last_name }}
+                            </a>
+                        </td>
+                        <td>{{ req.employee.position }}</td>
+                        <td><span class="badge bg-secondary">{{ req.employee.department }}</span></td>
+                        <td>{{ req.created_date|date:"d.m.Y H:i" }}</td>
+                        <td>
+                            <div class="btn-group" role="group">
+                                <a href="{% url 'approve_request' req.id %}"
+                                   class="btn btn-sm btn-success"
+                                   onclick="return confirm('Схвалити заявку #{{ req.id }}?')">
+                                    <i class="bi bi-check-circle"></i> Схвалити
+                                </a>
+                                <a href="{% url 'reject_request' req.id %}"
+                                   class="btn btn-sm btn-danger"
+                                   onclick="return confirm('Відхилити заявку #{{ req.id }}?')">
+                                    <i class="bi bi-x-circle"></i> Відхилити
+                                </a>
+                            </div>
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+        {% else %}
+        <div class="alert alert-success text-center">
+            <i class="bi bi-check-circle fs-1"></i>
+            <h4 class="mt-3">Немає заявок на розгляд!</h4>
+            <p class="text-muted">Всі заявки опрацьовані</p>
+        </div>
+        {% endif %}
+    </div>
+</div>
+{% endblock %}

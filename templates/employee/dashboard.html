@@ -1,0 +1,185 @@
+{% extends 'base.html' %}
+
+{% block title %}Панель співробітника{% endblock %}
+
+{% block content %}
+<h2><i class="bi bi-speedometer2"></i> Панель співробітника</h2>
+
+<div class="row mt-4">
+    <!-- Ліва колонка - Дані + Clock In/Out -->
+    <div class="col-md-4">
+        <!-- Мої дані -->
+        <div class="card stat-card mb-3">
+            <div class="card-body">
+                <h5 class="card-title"><i class="bi bi-person-badge"></i> Мої дані</h5>
+                <hr>
+                <p><strong>Ім'я:</strong> {{ employee.first_name }} {{ employee.last_name }}</p>
+                <p><strong>Посада:</strong> {{ employee.position }}</p>
+                <p><strong>Відділ:</strong> {{ employee.department }}</p>
+                <p><strong>Email:</strong> {{ employee.email }}</p>
+                <p><strong>Телефон:</strong> {{ employee.phone }}</p>
+                <p><strong>Дата прийому:</strong> {{ employee.hire_date|date:"d.m.Y" }}</p>
+                <hr>
+                <p class="mb-0">
+                    <strong>Зарплата:</strong>
+                    <span class="text-success fs-5">{{ employee.get_salary }} грн</span>
+                </p>
+                <a href="{% url 'my_salary' %}" class="btn btn-success btn-sm mt-2 w-100">
+            <i class="bi bi-cash-stack"></i> Детальніше про зарплату
+        </a>
+            </div>
+        </div>
+
+        <!-- Clock In/Out -->
+        <div class="card">
+            <div class="card-body text-center">
+                <h5><i class="bi bi-clock"></i> Облік робочого часу</h5>
+                <hr>
+
+                {% if is_clocked_in %}
+                    <div class="alert alert-success">
+                        <i class="bi bi-check-circle"></i> Ви на роботі
+                    </div>
+                    <p><strong>Прихід:</strong> {{ today_record.clock_in_time|date:"H:i" }}</p>
+                    <p><strong>Відпрацьовано:</strong> {{ today_hours }} год.</p>
+
+                    <form method="post" action="{% url 'clock_out' %}">
+                        {% csrf_token %}
+                        <button type="submit" class="btn btn-danger btn-lg w-100">
+                            <i class="bi bi-box-arrow-right"></i> Clock Out
+                        </button>
+                    </form>
+                {% else %}
+                    <div class="alert alert-secondary">
+                        <i class="bi bi-dash-circle"></i> Не на роботі
+                    </div>
+
+                    {% if today_record %}
+                        <p><strong>Сьогодні відпрацьовано:</strong> {{ today_hours }} год.</p>
+                    {% endif %}
+
+                    <form method="post" action="{% url 'clock_in' %}">
+                        {% csrf_token %}
+                        <button type="submit" class="btn btn-success btn-lg w-100">
+                            <i class="bi bi-box-arrow-in-right"></i> Clock In
+                        </button>
+                    </form>
+                {% endif %}
+
+                <hr>
+                <p class="mb-0 text-muted">
+                    <small>Тиждень: ~{{ week_hours }} год.</small>
+                </p>
+            </div>
+        </div>
+    </div>
+
+    <!-- Права колонка - Статистика, Заявки, Сповіщення -->
+    <div class="col-md-8">
+        <!-- Статистика -->
+        <div class="row">
+            <div class="col-md-4">
+                <div class="card text-center bg-primary text-white">
+                    <div class="card-body">
+                        <h3>{{ total_requests }}</h3>
+                        <p class="mb-0">Всього заявок</p>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-4">
+                <div class="card text-center bg-warning text-dark">
+                    <div class="card-body">
+                        <h3>{{ pending_requests }}</h3>
+                        <p class="mb-0">Очікують</p>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-4">
+                <div class="card text-center bg-success text-white">
+                    <div class="card-body">
+                        <h3>{{ approved_requests }}</h3>
+                        <p class="mb-0">Схвалено</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Швидкі дії -->
+        <div class="card mt-3">
+            <div class="card-body">
+                <h5><i class="bi bi-lightning"></i> Швидкі дії</h5>
+                <a href="{% url 'submit_request' %}" class="btn btn-primary me-2">
+                    <i class="bi bi-plus-circle"></i> Подати заявку
+                </a>
+                <a href="{% url 'my_requests' %}" class="btn btn-outline-primary">
+                    <i class="bi bi-list-check"></i> Мої заявки
+                </a>
+            </div>
+        </div>
+
+        <!-- Останні заявки -->
+        <div class="card mt-3">
+            <div class="card-body">
+                <h5><i class="bi bi-list-check"></i> Останні заявки</h5>
+                <div class="table-responsive">
+                    <table class="table table-hover">
+                        <thead class="table-light">
+                            <tr>
+                                <th>#</th>
+                                <th>Статус</th>
+                                <th>Дата</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for request in recent_requests %}
+                            <tr>
+                                <td>{{ request.id }}</td>
+                                <td>
+                                    {% if request.current_state.state_type == 'pending' %}
+                                        <span class="badge bg-warning">Очікує</span>
+                                    {% elif request.current_state.state_type == 'approved' %}
+                                        <span class="badge bg-success">Схвалено</span>
+                                    {% elif request.current_state.state_type == 'rejected' %}
+                                        <span class="badge bg-danger">Відхилено</span>
+                                    {% endif %}
+                                </td>
+                                <td>{{ request.created_date|date:"d.m.Y H:i" }}</td>
+                            </tr>
+                            {% empty %}
+                            <tr>
+                                <td colspan="3" class="text-center text-muted">Немає заявок</td>
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+                <a href="{% url 'my_requests' %}" class="btn btn-sm btn-outline-primary">
+                    Дивитись всі <i class="bi bi-arrow-right"></i>
+                </a>
+            </div>
+        </div>
+
+        <!-- Сповіщення -->
+        <div class="card mt-3">
+            <div class="card-body">
+                <h5><i class="bi bi-bell"></i> Останні сповіщення</h5>
+                {% for notif in recent_notifications %}
+                <div class="alert alert-info mb-2">
+                    <strong>{{ notif.get_notification_type_display }}</strong><br>
+                    {{ notif.message }}
+                    <br><small class="text-muted">{{ notif.created_at|date:"d.m.Y H:i" }}</small>
+                </div>
+                {% empty %}
+                <p class="text-muted">Немає нових сповіщень</p>
+                {% endfor %}
+
+                {% if recent_notifications %}
+                <a href="{% url 'notifications' %}" class="btn btn-sm btn-outline-info">
+                    Всі сповіщення <i class="bi bi-arrow-right"></i>
+                </a>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
