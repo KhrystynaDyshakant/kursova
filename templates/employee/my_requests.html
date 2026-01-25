@@ -1,0 +1,48 @@
+{% extends 'base.html' %}
+
+{% block title %}Мої заявки{% endblock %}
+
+{% block content %}
+<h2><i class="bi bi-list-check"></i> Мої заявки</h2>
+
+<div class="card mt-3">
+    <div class="card-body">
+        <table class="table table-hover">
+            <thead class="table-light">
+                <tr>
+                    <th>#</th>
+                    <th>Статус</th>
+                    <th>Дата створення</th>
+                    <th>Дії</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for request in requests %}
+    <tr>
+        <td>{{ request.id }}</td>
+        <td>
+            {% if request.current_state.state_type == 'pending' %}
+                <span class="badge bg-warning">Очікує розгляду</span>
+            {% elif request.current_state.state_type == 'approved' %}
+                <span class="badge bg-success">Схвалено</span>
+            {% elif request.current_state.state_type == 'rejected' %}
+                <span class="badge bg-danger">Відхилено</span>
+            {% endif %}
+        </td>
+        <td>{{ request.created_date|date:"d.m.Y H:i" }}</td>
+        <td>
+            <a href="{% url 'request_detail' request.id %}" class="btn btn-sm btn-info">
+                <i class="bi bi-eye"></i> Деталі
+            </a>
+        </td>
+    </tr>
+    {% empty %}
+    <tr>
+        <td colspan="4" class="text-center">Немає заявок</td>
+    </tr>
+    {% endfor %}
+</tbody>
+        </table>
+    </div>
+</div>
+{% endblock %}

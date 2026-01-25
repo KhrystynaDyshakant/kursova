@@ -1,0 +1,141 @@
+{% extends "admin/base_site.html" %}
+{% load static %}
+
+{% block title %}Звіти та аналітика{% endblock %}
+
+{% block content %}
+<h1>📊 Звіти та аналітика</h1>
+
+<!-- Загальна статистика -->
+<div style="display: grid; grid-template-columns: repeat(4, 1fr); gap: 15px; margin: 20px 0;">
+    <div style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white; padding: 20px; border-radius: 10px; text-align: center;">
+        <h2 style="margin: 0; font-size: 2.5em;">{{ total_employees }}</h2>
+        <p style="margin: 5px 0 0 0;">Співробітників</p>
+    </div>
+    <div style="background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%); color: white; padding: 20px; border-radius: 10px; text-align: center;">
+        <h2 style="margin: 0; font-size: 2.5em;">{{ pending_requests }}</h2>
+        <p style="margin: 5px 0 0 0;">Заявок на розгляд</p>
+    </div>
+    <div style="background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%); color: white; padding: 20px; border-radius: 10px; text-align: center;">
+        <h2 style="margin: 0; font-size: 2.5em;">{{ on_work_now }}</h2>
+        <p style="margin: 5px 0 0 0;">Зараз на роботі</p>
+    </div>
+    <div style="background: linear-gradient(135deg, #43e97b 0%, #38f9d7 100%); color: white; padding: 20px; border-radius: 10px; text-align: center;">
+        <h2 style="margin: 0; font-size: 2.5em;">{{ on_leave_now }}</h2>
+        <p style="margin: 5px 0 0 0;">У відпустці</p>
+    </div>
+</div>
+
+<div style="display: grid; grid-template-columns: 1fr 1fr; gap: 20px; margin-top: 20px;">
+    <!-- Звіт по відділах та зарплатах -->
+    <div style="background: white; padding: 20px; border-radius: 8px; box-shadow: 0 2px 4px rgba(0,0,0,0.1);">
+        <h2 style="color: #417690; margin-top: 0;">💰 Витрати на зарплати по відділах</h2>
+        <table style="width: 100%; border-collapse: collapse;">
+            <thead style="background: #f8f9fa;">
+                <tr>
+                    <th style="padding: 12px; text-align: left; border-bottom: 2px solid #dee2e6;">Відділ</th>
+                    <th style="padding: 12px; text-align: center; border-bottom: 2px solid #dee2e6;">Співробітників</th>
+                    <th style="padding: 12px; text-align: right; border-bottom: 2px solid #dee2e6;">Загальна зарплата</th>
+                    <th style="padding: 12px; text-align: right; border-bottom: 2px solid #dee2e6;">Середня</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for dept in salary_by_dept %}
+                <tr style="border-bottom: 1px solid #dee2e6;">
+                    <td style="padding: 12px;"><strong>{{ dept.department }}</strong></td>
+                    <td style="padding: 12px; text-align: center;">{{ dept.count }}</td>
+                    <td style="padding: 12px; text-align: right; color: #28a745; font-weight: bold;">{{ dept.total_salary|floatformat:0 }} грн</td>
+                    <td style="padding: 12px; text-align: right;">{{ dept.avg_salary|floatformat:0 }} грн</td>
+                </tr>
+                {% endfor %}
+                <tr style="background: #f8f9fa; font-weight: bold;">
+                    <td style="padding: 12px;" colspan="2">РАЗОМ:</td>
+                    <td style="padding: 12px; text-align: right; color: #28a745; font-size: 1.1em;">{{ total_salary|floatformat:0 }} грн</td>
+                    <td></td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+
+    <!-- Статистика заявок -->
+    <div style="background: white; padding: 20px; border-radius: 8px; box-shadow: 0 2px 4px rgba(0,0,0,0.1);">
+        <h2 style="color: #417690; margin-top: 0;">📋 Статистика заявок</h2>
+        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 15px;">
+            <div style="background: #e3f2fd; padding: 15px; border-radius: 8px; text-align: center;">
+                <h3 style="margin: 0; color: #1976d2; font-size: 2em;">{{ total_requests }}</h3>
+                <p style="margin: 5px 0 0 0; color: #666;">Всього заявок</p>
+            </div>
+            <div style="background: #fff3e0; padding: 15px; border-radius: 8px; text-align: center;">
+                <h3 style="margin: 0; color: #f57c00; font-size: 2em;">{{ pending_requests }}</h3>
+                <p style="margin: 5px 0 0 0; color: #666;">Очікують</p>
+            </div>
+            <div style="background: #e8f5e9; padding: 15px; border-radius: 8px; text-align: center;">
+                <h3 style="margin: 0; color: #388e3c; font-size: 2em;">{{ approved_requests }}</h3>
+                <p style="margin: 5px 0 0 0; color: #666;">Схвалено</p>
+            </div>
+            <div style="background: #ffebee; padding: 15px; border-radius: 8px; text-align: center;">
+                <h3 style="margin: 0; color: #d32f2f; font-size: 2em;">{{ rejected_requests }}</h3>
+                <p style="margin: 5px 0 0 0; color: #666;">Відхилено</p>
+            </div>
+        </div>
+
+        <div style="margin-top: 20px; background: #f8f9fa; padding: 15px; border-radius: 8px;">
+            <h4 style="margin-top: 0;">📅 Відпустки</h4>
+            <p><strong>Цього місяця:</strong> {{ leaves_this_month }} заявок</p>
+            <p><strong>Зараз у відпустці:</strong> {{ on_leave_now }} співробітників</p>
+        </div>
+    </div>
+</div>
+
+<!-- Робочий час -->
+<div style="background: white; padding: 20px; border-radius: 8px; box-shadow: 0 2px 4px rgba(0,0,0,0.1); margin-top: 20px;">
+    <h2 style="color: #417690; margin-top: 0;">⏰ Облік робочого часу (останній тиждень)</h2>
+    <p><strong>Загальні години:</strong> {{ total_hours_week }} год</p>
+    <p><strong>Зараз на роботі:</strong> {{ on_work_now }} співробітників</p>
+
+    <h4>Топ-10 співробітників по відпрацьованих годинах:</h4>
+    <table style="width: 100%; border-collapse: collapse;">
+        <thead style="background: #f8f9fa;">
+            <tr>
+                <th style="padding: 10px; text-align: left; border-bottom: 2px solid #dee2e6;">#</th>
+                <th style="padding: 10px; text-align: left; border-bottom: 2px solid #dee2e6;">Співробітник</th>
+                <th style="padding: 10px; text-align: left; border-bottom: 2px solid #dee2e6;">Відділ</th>
+                <th style="padding: 10px; text-align: right; border-bottom: 2px solid #dee2e6;">Годин</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for item in top_workers %}
+            <tr style="border-bottom: 1px solid #dee2e6;">
+                <td style="padding: 10px;">{{ forloop.counter }}</td>
+                <td style="padding: 10px;"><strong>{{ item.employee.first_name }} {{ item.employee.last_name }}</strong></td>
+                <td style="padding: 10px;">{{ item.employee.department }}</td>
+                <td style="padding: 10px; text-align: right; color: #17a2b8; font-weight: bold;">{{ item.hours|floatformat:1 }} год</td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</div>
+
+<!-- Вакансії та кандидати -->
+<div style="background: white; padding: 20px; border-radius: 8px; box-shadow: 0 2px 4px rgba(0,0,0,0.1); margin-top: 20px;">
+    <h2 style="color: #417690; margin-top: 0;">🎯 Рекрутинг</h2>
+    <div style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 15px;">
+        <div style="background: #e1f5fe; padding: 15px; border-radius: 8px; text-align: center;">
+            <h3 style="margin: 0; color: #0277bd;">{{ active_vacancies }}</h3>
+            <p style="margin: 5px 0 0 0;">Активних вакансій</p>
+        </div>
+        <div style="background: #f3e5f5; padding: 15px; border-radius: 8px; text-align: center;">
+            <h3 style="margin: 0; color: #7b1fa2;">{{ total_candidates }}</h3>
+            <p style="margin: 5px 0 0 0;">Всього кандидатів</p>
+        </div>
+        <div style="background: #fff9c4; padding: 15px; border-radius: 8px; text-align: center;">
+            <h3 style="margin: 0; color: #f57f17;">{{ new_candidates }}</h3>
+            <p style="margin: 5px 0 0 0;">Нових резюме</p>
+        </div>
+    </div>
+</div>
+
+<p style="margin-top: 30px;">
+    <a href="{% url 'admin:index' %}" class="button">← Повернутись до головної</a>
+</p>
+{% endblock %}
