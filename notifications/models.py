@@ -2,9 +2,7 @@ from django.db import models
 
 
 class Notification(models.Model):
-    """
-    Notification - сповіщення
-    """
+
     NOTIFICATION_TYPES = [
         ('system', 'Системне'),
         ('leave_approved', 'Відпустку схвалено'),
@@ -49,9 +47,7 @@ class Notification(models.Model):
 
 
 class NotificationService:
-    """
-    NotificationService - сервіс сповіщень (Subject в Observer Pattern)
-    """
+
     def __init__(self):
         self._observers = []
 

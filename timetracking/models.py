@@ -5,9 +5,7 @@ import threading
 
 
 class TimeRecord(models.Model):
-    """
-    TimeRecord - запис робочого часу
-    """
+
     employee = models.ForeignKey(
         'employees.Employee',
         on_delete=models.CASCADE,
@@ -34,9 +32,7 @@ class TimeRecord(models.Model):
 
 
 class TimeTrackingSystem:
-    """
-    TimeTrackingSystem - система обліку часу (Singleton Pattern)
-    """
+
     _instance = None
     _lock = threading.Lock()
 

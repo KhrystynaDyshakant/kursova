@@ -1,51 +1,43 @@
 from django.db import models
 from abc import ABC, abstractmethod
-from decimal import Decimal
-
 
 class Document(ABC):
-    """
-    <<abstract>> Document
-    Абстрактний базовий клас для документів (Factory Pattern)
-    """
 
     @abstractmethod
     def generate(self):
-        """Генерує документ"""
         pass
 
     @abstractmethod
     def approve(self):
-        """Затверджує документ"""
         pass
 
     @abstractmethod
     def reject(self):
-        """Відхиляє документ"""
         pass
 
-
 class DocumentFactory(ABC):
-    """
-    <<abstract>> DocumentFactory
-    Абстрактна фабрика для створення документів (Factory Pattern)
-    """
+
+    document_type = "base"
+    auto_generate = True
+
+    def log_creation(self, document):
+        print(f"[FACTORY] Створено {self.document_type}: #{document.id}")
+        return True
+
+    def validate_before_create(self, **kwargs):
+        if not kwargs:
+            raise ValueError("Потрібні дані для створення документа")
+        return True
+
+    def get_document_type(self):
+        return self.document_type
 
     @abstractmethod
     def create_document(self, **kwargs):
-        """Створює документ"""
         pass
 
-
-# ============================================
-# Contract - Контракт співробітника
-# ============================================
-
 class Contract(models.Model):
-    """
-    Contract - контракт співробітника
-    Реалізує інтерфейс: Document
-    """
+
     employee = models.ForeignKey(
         'employees.Employee',
         on_delete=models.CASCADE,
@@ -88,17 +80,15 @@ class Contract(models.Model):
     def __str__(self):
         return f"Контракт: {self.employee}"
 
-
 Document.register(Contract)
 
+class ContractFactory(DocumentFactory):
 
-class ContractFactory:
-    """
-    ContractFactory - фабрика для створення контрактів
-    Реалізує інтерфейс: DocumentFactory
-    """
+    document_type = "contract"
 
     def create_document(self, employee, position, salary, start_date, end_date=None):
+        self.validate_before_create(employee=employee, position=position, salary=salary)
+
         contract = Contract.objects.create(
             employee=employee,
             position=position,
@@ -106,22 +96,15 @@ class ContractFactory:
             start_date=start_date,
             end_date=end_date
         )
-        contract.generate()
+
+        if self.auto_generate:
+            contract.generate()
+
+        self.log_creation(contract)
         return contract
 
-
-DocumentFactory.register(ContractFactory)
-
-
-# ============================================
-# LeaveRequest - Заявка на відпустку
-# ============================================
-
 class LeaveRequest(models.Model):
-    """
-    LeaveRequest - заявка на відпустку
-    Реалізує інтерфейс: Document
-    """
+
     LEAVE_TYPES = [
         ('vacation', 'Відпустка'),
         ('sick', 'Лікарняний'),
@@ -173,13 +156,13 @@ class LeaveRequest(models.Model):
 Document.register(LeaveRequest)
 
 
-class LeaveRequestFactory:
-    """
-    LeaveRequestFactory - фабрика для створення заявок на відпустку
-    Реалізує інтерфейс: DocumentFactory
-    """
+class LeaveRequestFactory(DocumentFactory):
+
+    document_type = "leave_request"
 
     def create_document(self, employee, leave_type, reason, start_date, end_date):
+        self.validate_before_create(employee=employee, leave_type=leave_type)
+
         leave_request = LeaveRequest.objects.create(
             employee=employee,
             leave_type=leave_type,
@@ -187,22 +170,16 @@ class LeaveRequestFactory:
             start_date=start_date,
             end_date=end_date
         )
-        leave_request.generate()
+
+        if self.auto_generate:
+            leave_request.generate()
+
+        self.log_creation(leave_request)
         return leave_request
 
 
-DocumentFactory.register(LeaveRequestFactory)
-
-
-# ============================================
-# Vacancy - Вакансія (Document)
-# ============================================
-
 class Vacancy(models.Model):
-    """
-    Vacancy - вакансія
-    Реалізує інтерфейс: Document
-    """
+
     title = models.CharField(max_length=200, verbose_name="Назва посади")
     department = models.CharField(max_length=100, verbose_name="Відділ")
     description = models.TextField(verbose_name="Опис вакансії")
@@ -252,14 +229,13 @@ class Vacancy(models.Model):
 
 Document.register(Vacancy)
 
+class VacancyFactory(DocumentFactory):
 
-class VacancyFactory:
-    """
-    VacancyFactory - фабрика для створення вакансій
-    Реалізує інтерфейс: DocumentFactory
-    """
+    document_type = "vacancy"
 
     def create_document(self, title, department, description, requirements, salary_from, salary_to):
+        self.validate_before_create(title=title, department=department)
+
         vacancy = Vacancy.objects.create(
             title=title,
             department=department,
@@ -268,22 +244,15 @@ class VacancyFactory:
             salary_from=salary_from,
             salary_to=salary_to
         )
-        vacancy.generate()
+
+        if self.auto_generate:
+            vacancy.generate()
+
+        self.log_creation(vacancy)
         return vacancy
 
-
-DocumentFactory.register(VacancyFactory)
-
-
-# ============================================
-# Candidate - Кандидат на вакансію
-# ============================================
-
 class Candidate(models.Model):
-    """
-    Candidate - кандидат на вакансію
-    Пов'язаний з Vacancy (1 вакансія - багато кандидатів)
-    """
+
     STATUS_CHOICES = [
         ('new', 'Новий'),
         ('review', 'На розгляді'),
