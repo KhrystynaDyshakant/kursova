@@ -2,10 +2,6 @@ from django.contrib import admin
 from django.utils.html import format_html
 from .models import Contract, Vacancy, Candidate
 
-
-# LeaveRequest НЕ реєструємо - він дублює функціонал "Заявки" (requests.Request)
-
-
 @admin.register(Vacancy)
 class VacancyAdmin(admin.ModelAdmin):
     list_display = ['title', 'department', 'salary_range', 'is_active_display', 'candidates_count', 'created_date']

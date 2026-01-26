@@ -5,10 +5,6 @@ from abc import ABC, abstractmethod
 
 
 class RequestState(ABC):
-    """
-    <<interface>> RequestState
-    Абстрактний базовий клас для станів заявки (State Pattern)
-    """
 
     @abstractmethod
     def handle(self, request):
@@ -16,10 +12,6 @@ class RequestState(ABC):
 
 
 class PendingState(models.Model):
-    """
-    PendingState - стан "Очікує розгляду"
-    Реалізує інтерфейс: RequestState
-    """
 
     class Meta:
         verbose_name = "Стан: Очікує"
@@ -40,10 +32,6 @@ RequestState.register(PendingState)
 
 
 class ApprovedState(models.Model):
-    """
-    ApprovedState - стан "Схвалено"
-    Реалізує інтерфейс: RequestState
-    """
 
     class Meta:
         verbose_name = "Стан: Схвалено"
@@ -64,10 +52,6 @@ RequestState.register(ApprovedState)
 
 
 class RejectedState(models.Model):
-    """
-    RejectedState - стан "Відхилено"
-    Реалізує інтерфейс: RequestState
-    """
 
     class Meta:
         verbose_name = "Стан: Відхилено"
@@ -88,10 +72,7 @@ RequestState.register(RejectedState)
 
 
 class Request(models.Model):
-    """
-    Request - заявка співробітника
-    Використовує State Pattern для керування станами
-    """
+
     REQUEST_TYPES = [
         ('vacation', 'Відпустка'),
         ('sick', 'Лікарняний'),

@@ -4,9 +4,7 @@ from employees.models import Observer
 
 
 class User(AbstractUser):
-    """
-    User - розширена модель користувача
-    """
+
     ROLE_CHOICES = [
         ('employee', 'Співробітник'),
         ('hr', 'HR'),
@@ -31,10 +29,7 @@ class User(AbstractUser):
 
 
 class HR(models.Model):
-    """
-    HR - менеджер з персоналу
-    Реалізує інтерфейс: Observer
-    """
+
     user = models.OneToOneField(
         User,
         on_delete=models.CASCADE,

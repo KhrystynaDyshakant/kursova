@@ -6,10 +6,6 @@ from decimal import Decimal
 
 
 class SalaryStrategy(ABC):
-    """
-    <<interface>> SalaryStrategy
-    Абстрактний базовий клас для стратегій розрахунку зарплати
-    """
 
     @abstractmethod
     def calculate_salary(self, employee):
@@ -21,10 +17,6 @@ class SalaryStrategy(ABC):
 
 
 class Observer(ABC):
-    """
-    <<interface>> Observer
-    Абстрактний базовий клас для спостерігачів
-    """
 
     @abstractmethod
     def update(self, message):
@@ -32,10 +24,7 @@ class Observer(ABC):
 
 
 class FixedSalaryStrategy(models.Model):
-    """
-    FixedSalaryStrategy - стратегія фіксованої зарплати
-    Реалізує інтерфейс: SalaryStrategy
-    """
+
     monthly_amount = models.DecimalField(
         max_digits=10,
         decimal_places=2,
@@ -60,10 +49,7 @@ SalaryStrategy.register(FixedSalaryStrategy)
 
 
 class BonusSalaryStrategy(models.Model):
-    """
-    BonusSalaryStrategy - стратегія зарплати з бонусами
-    Реалізує інтерфейс: SalaryStrategy
-    """
+
     base_salary = models.DecimalField(
         max_digits=10,
         decimal_places=2,
@@ -94,11 +80,7 @@ SalaryStrategy.register(BonusSalaryStrategy)
 
 
 class Employee(models.Model):
-    """
-    Employee - співробітник
-    Реалізує інтерфейс: Observer
-    Використовує: SalaryStrategy (Strategy Pattern)
-    """
+
     first_name = models.CharField(max_length=100, verbose_name="Ім'я")
     last_name = models.CharField(max_length=100, verbose_name="Прізвище")
     email = models.EmailField(unique=True, verbose_name="Email")

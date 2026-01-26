@@ -4,11 +4,6 @@ from django.contrib.contenttypes.models import ContentType
 from django import forms
 from .models import Request, PendingState, ApprovedState, RejectedState
 
-
-# Стани НЕ реєструємо в адмінці - вони використовуються внутрішньо для State pattern
-# і створюються автоматично через скрипт setup_all_data.py
-
-
 class RequestAdminForm(forms.ModelForm):
     STATE_CHOICES = [
         ('pending', 'Очікує'),
