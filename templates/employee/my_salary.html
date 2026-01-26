@@ -1,0 +1,225 @@
+{% extends 'base.html' %}
+
+{% block title %}Моя зарплата{% endblock %}
+
+{% block content %}
+<h2><i class="bi bi-cash-stack"></i> Моя зарплата та бонуси</h2>
+
+<div class="row mt-4">
+    <!-- Поточна зарплата -->
+    <div class="col-md-4">
+        <div class="card border-success">
+            <div class="card-header bg-success text-white">
+                <h5 class="mb-0"><i class="bi bi-wallet2"></i> Поточна зарплата</h5>
+            </div>
+            <div class="card-body">
+                <h2 class="text-success mb-3">{{ current_salary|floatformat:2 }} грн</h2>
+
+                <hr>
+
+                <h6>Тип розрахунку:</h6>
+                <p>
+                    {% if strategy.strategy_type == 'fixed' %}
+                        <span class="badge bg-primary">Фіксована</span>
+                    {% elif strategy.strategy_type == 'bonus' %}
+                        <span class="badge bg-warning text-dark">З бонусами</span>
+                    {% endif %}
+                </p>
+
+                {% if strategy.strategy_type == 'fixed' %}
+                    <h6>Щомісячна сума:</h6>
+                    <p><strong>{{ strategy.monthly_amount|floatformat:2 }} грн</strong></p>
+                {% elif strategy.strategy_type == 'bonus' %}
+                    <h6>Базова зарплата:</h6>
+                    <p><strong>{{ strategy.base_salary|floatformat:2 }} грн</strong></p>
+
+                    <h6>Відсоток бонусу:</h6>
+                    <p><strong>{{ strategy.bonus_percentage }}%</strong></p>
+
+                    <h6>Сума бонусу:</h6>
+                    {% widthratio strategy.base_salary 100 strategy.bonus_percentage as bonus_calc %}
+                    <p class="text-warning">
+                        <strong>{{ bonus_calc|floatformat:2 }} грн</strong>
+                    </p>
+
+                    <hr>
+
+                    <div class="alert alert-info mb-0">
+                        <small>
+                            <strong>Розрахунок:</strong><br>
+                            {{ strategy.base_salary|floatformat:2 }} грн (базова)<br>
+                            + {{ bonus_calc|floatformat:2 }} грн ({{ strategy.bonus_percentage }}% бонус)<br>
+                            = <strong>{{ current_salary|floatformat:2 }} грн</strong>
+                        </small>
+                    </div>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+
+    <!-- Історія зарплат -->
+    <div class="col-md-8">
+        <div class="card">
+            <div class="card-header bg-primary text-white">
+                <h5 class="mb-0"><i class="bi bi-calendar3"></i> Історія виплат (останні 6 місяців)</h5>
+            </div>
+            <div class="card-body">
+                <div class="table-responsive">
+                    <table class="table table-hover">
+                        <thead class="table-light">
+                            <tr>
+                                <th>Місяць</th>
+                                <th>Базова</th>
+                                {% if strategy.strategy_type == 'bonus' %}
+                                <th>Бонус</th>
+                                {% endif %}
+                                <th>Всього</th>
+                                <th>Годин</th>
+                                <th>Днів</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for item in salary_history %}
+                            <tr {% if forloop.first %}class="table-active"{% endif %}>
+                                <td>
+                                    <strong>{{ item.month }}</strong>
+                                    {% if forloop.first %}
+                                        <span class="badge bg-info ms-2">Поточний</span>
+                                    {% endif %}
+                                </td>
+                                <td>{{ item.base_salary|floatformat:2 }} грн</td>
+                                {% if strategy.strategy_type == 'bonus' %}
+                                <td class="text-warning">
+                                    <strong>+{{ item.bonus|floatformat:2 }} грн</strong>
+                                </td>
+                                {% endif %}
+                                <td class="text-success">
+                                    <strong>{{ item.total|floatformat:2 }} грн</strong>
+                                </td>
+                                <td>
+                                    <span class="badge bg-info">{{ item.hours_worked }} год</span>
+                                </td>
+                                <td>
+                                    <span class="badge bg-secondary">{{ item.days_worked }} дн</span>
+                                </td>
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                        <tfoot class="table-light">
+                            <tr>
+                                <th colspan="{% if strategy.strategy_type == 'bonus' %}3{% else %}2{% endif %}">
+                                    <strong>Разом за 6 місяців:</strong>
+                                </th>
+                                <th class="text-primary">
+                                    {% widthratio current_salary 1 6 as total_6months %}
+                                    <strong>{{ total_6months|floatformat:2 }} грн</strong>
+                                </th>
+                                <th colspan="2"></th>
+                            </tr>
+                        </tfoot>
+                    </table>
+                </div>
+            </div>
+        </div>
+
+        <!-- Статистика -->
+        <div class="row mt-3">
+            <div class="col-md-4">
+                <div class="card bg-light">
+                    <div class="card-body text-center">
+                        <h6><i class="bi bi-calculator"></i> Середня зарплата</h6>
+                        <h4 class="text-primary mb-0">
+                            {{ current_salary|floatformat:2 }} грн
+                        </h4>
+                        <small class="text-muted">за місяць</small>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-4">
+                <div class="card bg-light">
+                    <div class="card-body text-center">
+                        <h6><i class="bi bi-clock-history"></i> Цього місяця</h6>
+                        <h4 class="text-info mb-0">
+                            {{ salary_history.0.hours_worked }} год
+                        </h4>
+                        <small class="text-muted">відпрацьовано</small>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-4">
+                <div class="card bg-light">
+                    <div class="card-body text-center">
+                        <h6><i class="bi bi-calendar-check"></i> Робочих днів</h6>
+                        <h4 class="text-success mb-0">
+                            {{ salary_history.0.days_worked }}
+                        </h4>
+                        <small class="text-muted">цього місяця</small>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Пояснення розрахунку -->
+<div class="row mt-4">
+    <div class="col-md-12">
+        <div class="card">
+            <div class="card-header bg-info text-white">
+                <h5 class="mb-0"><i class="bi bi-info-circle"></i> Як розраховується моя зарплата?</h5>
+            </div>
+            <div class="card-body">
+                {% if strategy.strategy_type == 'fixed' %}
+                    <p class="mb-2">
+                        <i class="bi bi-check-circle text-success"></i>
+                        У вас <strong>фіксована зарплата</strong> - {{ strategy.monthly_amount|floatformat:2 }} грн щомісяця
+                    </p>
+                    <p class="mb-2">
+                        <i class="bi bi-info-circle text-primary"></i>
+                        Зарплата не залежить від кількості відпрацьованих годин
+                    </p>
+                    <p class="mb-0">
+                        <i class="bi bi-calendar-event text-info"></i>
+                        Виплата здійснюється щомісяця в один і той самий день
+                    </p>
+                {% elif strategy.strategy_type == 'bonus' %}
+                    <p class="mb-2">
+                        <i class="bi bi-piggy-bank text-warning"></i>
+                        У вас зарплата <strong>з бонусною системою</strong>
+                    </p>
+                    <div class="row">
+                        <div class="col-md-6">
+                            <div class="alert alert-light border">
+                                <h6 class="text-primary">📊 Формула розрахунку:</h6>
+                                <p class="mb-1"><strong>Базова зарплата:</strong> {{ strategy.base_salary|floatformat:2 }} грн</p>
+                                <p class="mb-1"><strong>Бонус ({{ strategy.bonus_percentage }}%):</strong>
+                                    {% widthratio strategy.base_salary 100 strategy.bonus_percentage as bonus_amount %}
+                                    {{ bonus_amount|floatformat:2 }} грн
+                                </p>
+                                <hr class="my-2">
+                                <p class="mb-0"><strong>Разом:</strong> <span class="text-success">{{ current_salary|floatformat:2 }} грн</span></p>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="alert alert-light border">
+                                <h6 class="text-info">💡 Як збільшити дохід?</h6>
+                                <ul class="mb-0">
+                                    <li>Підвищення відсотка бонусу</li>
+                                    <li>Збільшення базової зарплати</li>
+                                    <li>Досягнення KPI показників</li>
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="mt-3">
+    <a href="{% url 'employee_dashboard' %}" class="btn btn-secondary">
+        <i class="bi bi-arrow-left"></i> Назад на панель
+    </a>
+</div>
+{% endblock %}

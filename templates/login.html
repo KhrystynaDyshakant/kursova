@@ -1,0 +1,68 @@
+{% extends 'base.html' %}
+
+{% block title %}Вхід - HRM System{% endblock %}
+
+{% block content %}
+<div class="row justify-content-center mt-5">
+    <div class="col-md-4">
+        <div class="card shadow">
+            <div class="card-body">
+                <h3 class="text-center mb-4">
+                    <i class="bi bi-person-lock"></i> Вхід до системи
+                </h3>
+
+                {% if form.errors %}
+                <div class="alert alert-danger">
+                    <i class="bi bi-exclamation-triangle"></i> Невірний логін або пароль
+                </div>
+                {% endif %}
+
+                <form method="post">
+                    {% csrf_token %}
+                    <div class="mb-3">
+                        <label class="form-label">
+                            <i class="bi bi-person"></i> Логін
+                        </label>
+                        <input type="text" name="username" class="form-control" required autofocus>
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label">
+                            <i class="bi bi-lock"></i> Пароль
+                        </label>
+                        <input type="password" name="password" class="form-control" required>
+                    </div>
+                    <button type="submit" class="btn btn-primary w-100">
+                        <i class="bi bi-box-arrow-in-right"></i> Увійти
+                    </button>
+                </form>
+
+                <hr class="my-4">
+
+                <div class="text-center">
+                    <p class="text-muted mb-2"><strong>🔑 Тестові акаунти:</strong></p>
+
+                    <div class="card bg-light mb-2">
+                        <div class="card-body py-2">
+                            <strong>Співробітник:</strong><br>
+                            <code>maria / admin123</code>
+                        </div>
+                    </div>
+
+                    <div class="card bg-light">
+                        <div class="card-body py-2">
+                            <strong>HR Менеджер:</strong><br>
+                            <code>olga_hr / admin123</code>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="text-center mt-3">
+            <small class="text-muted">
+                HRM System © 2025
+            </small>
+        </div>
+    </div>
+</div>
+{% endblock %}
